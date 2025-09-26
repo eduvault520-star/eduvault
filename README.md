@@ -263,4 +263,5 @@ Proprietary - EduVault Platform
 
 *Empowering students with technology-driven educational resources*
 #   e d u v a u l t  
+ #   e d u v a u l t  
  
