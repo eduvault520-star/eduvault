@@ -2,11 +2,21 @@ import axios from 'axios';
 
 // Create axios instance with base URL
 const api = axios.create({
-  baseURL: process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001',
+  baseURL: process.env.REACT_APP_BACKEND_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
+});
+
+// Add a request interceptor to ensure all requests use the baseURL
+api.interceptors.request.use(config => {
+  // If the URL doesn't start with http, prepend the baseURL
+  if (!config.url.startsWith('http') && !config.url.startsWith(process.env.REACT_APP_BACKEND_URL)) {
+    config.url = `${process.env.REACT_APP_BACKEND_URL}${config.url.startsWith('/') ? '' : '/'}${config.url}`;
+  }
+  return config;
 });
 
 // Request interceptor to add auth token

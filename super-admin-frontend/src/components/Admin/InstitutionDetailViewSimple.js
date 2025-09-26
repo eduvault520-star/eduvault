@@ -602,7 +602,7 @@ const InstitutionDetailViewSimple = ({ institution, onBack }) => {
                   <Button
                     variant="contained"
                     startIcon={<PlayArrow />}
-                    href={`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001'}/api/upload/file/${previewContent.content.filename}`}
+                    href={`${process.env.REACT_APP_BACKEND_URL}/api/upload/file/${previewContent.content.filename}`}
                     target="_blank"
                     sx={{ mr: 1 }}
                   >
@@ -611,7 +611,7 @@ const InstitutionDetailViewSimple = ({ institution, onBack }) => {
                   <Button
                     variant="outlined"
                     startIcon={<Download />}
-                    href={`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001'}/api/upload/file/${previewContent.content.filename}`}
+                    href={`${process.env.REACT_APP_BACKEND_URL}/api/upload/file/${previewContent.content.filename}`}
                     download
                   >
                     Download (Admin Only)
@@ -627,7 +627,7 @@ const InstitutionDetailViewSimple = ({ institution, onBack }) => {
                   <Button
                     variant="contained"
                     startIcon={<Visibility />}
-                    href={`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001'}/api/upload/file/${previewContent.content.filename}`}
+                    href={`${process.env.REACT_APP_BACKEND_URL}/api/upload/file/${previewContent.content.filename}`}
                     target="_blank"
                     sx={{ mr: 1 }}
                   >
@@ -636,7 +636,7 @@ const InstitutionDetailViewSimple = ({ institution, onBack }) => {
                   <Button
                     variant="outlined"
                     startIcon={<Download />}
-                    href={`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001'}/api/upload/file/${previewContent.content.filename}`}
+                    href={`${process.env.REACT_APP_BACKEND_URL}/api/upload/file/${previewContent.content.filename}`}
                     download
                   >
                     Download PDF
@@ -652,7 +652,7 @@ const InstitutionDetailViewSimple = ({ institution, onBack }) => {
                   <Button
                     variant="contained"
                     startIcon={<Visibility />}
-                    href={`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001'}/api/upload/file/${previewContent.content.filename}`}
+                    href={`${process.env.REACT_APP_BACKEND_URL}/api/upload/file/${previewContent.content.filename}`}
                     target="_blank"
                     sx={{ mr: 1 }}
                   >
@@ -661,7 +661,7 @@ const InstitutionDetailViewSimple = ({ institution, onBack }) => {
                   <Button
                     variant="outlined"
                     startIcon={<Download />}
-                    href={`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001'}/api/upload/file/${previewContent.content.filename}`}
+                    href={`${process.env.REACT_APP_BACKEND_URL}/api/upload/file/${previewContent.content.filename}`}
                     download
                   >
                     Download

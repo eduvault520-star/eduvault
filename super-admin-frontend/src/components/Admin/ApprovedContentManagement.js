@@ -141,7 +141,7 @@ const ApprovedContentManagement = () => {
   const handleViewFile = (content) => {
     const fileUrl = content.content?.filePath || content.content?.url;
     if (fileUrl) {
-      window.open(`${process.env.REACT_APP_API_URL || 'http://localhost:5001'}${fileUrl}`, '_blank');
+      window.open(`${process.env.REACT_APP_BACKEND_URL}${fileUrl}`, '_blank');
     } else {
       setSnackbar({
         open: true,

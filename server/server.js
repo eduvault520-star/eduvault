@@ -13,15 +13,33 @@ require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
+// Configure CORS for both Express and Socket.IO
+const allowedOrigins = [
+  'https://admin.kibetronoh.com',
+  'https://super.admin.kibetronoh.com',
+  'https://kibetronoh.com',
+  'https://eduvault-exms.onrender.com',
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:3002'
+];
+
 const io = socketIo(server, {
   cors: {
     origin: process.env.NODE_ENV === 'production' 
-      ? process.env.FRONTEND_URL 
-      : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
-    methods: ['GET', 'POST'],
+      ? allowedOrigins
+      : allowedOrigins,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true
   }
 });
+
+// Apply CORS to all routes
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true
+}));
 
 // Initialize Socket.IO
 initializeSocket(io);
@@ -36,8 +54,17 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       scriptSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "blob:"],
-      frameAncestors: ["'self'", "http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
+      imgSrc: ["'self'", "data:", "blob:", "https://*"],
+      connectSrc: ["'self'", "https://eduvault-exms.onrender.com", "wss://eduvault-exms.onrender.com"],
+      frameAncestors: [
+        "'self'", 
+        "http://localhost:3000", 
+        "http://localhost:3001", 
+        "http://localhost:3002", 
+        "https://admin.kibetronoh.com",
+        "https://super.admin.kibetronoh.com",
+        "https://kibetronoh.com"
+      ],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null
     }

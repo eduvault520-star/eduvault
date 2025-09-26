@@ -67,8 +67,8 @@ const HierarchicalContentApproval = () => {
   const [expandedInstitutions, setExpandedInstitutions] = useState(new Set());
   const [expandedCourses, setExpandedCourses] = useState(new Set());
   
-  // Get backend URL from environment or default
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001';
+  // Get backend URL from environment
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
   
   // Review dialog state
   const [openReviewDialog, setOpenReviewDialog] = useState(false);

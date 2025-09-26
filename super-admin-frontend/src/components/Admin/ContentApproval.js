@@ -165,8 +165,8 @@ const ContentApproval = () => {
   const [tabValue, setTabValue] = useState(0);
   const [stats, setStats] = useState({ pending: 0, approved: 0, rejected: 0, total: 0 });
   
-  // Get backend URL from environment or default
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001';
+  // Get backend URL from environment
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
   
   // Review dialog state
   const [openReviewDialog, setOpenReviewDialog] = useState(false);

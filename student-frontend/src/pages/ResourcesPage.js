@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from '../utils/api';
 import {
   Container,
   Typography,
@@ -34,12 +35,10 @@ const ResourcesPage = () => {
   const fetchResources = async () => {
     try {
       setError(null);
-      const response = await fetch('/api/resources');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const response = await api.get('/api/resources');
+      if (response.status >= 200 && response.status < 300) {
+        setResources(response.data.resources || []);
       }
-      const data = await response.json();
-      setResources(data.resources || []);
     } catch (error) {
       console.error('Error fetching resources:', error);
       setError('Failed to load resources. Please try again later.');

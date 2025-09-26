@@ -216,7 +216,7 @@ const CoursePage = () => {
       handleSubscriptionClick(content.unit.year);
     } else if (content.accessRules?.canDownload) {
       // Allow download
-      const downloadUrl = `${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001'}/api/upload/file/${content.filename}`;
+      const downloadUrl = `${process.env.REACT_APP_BACKEND_URL}/api/upload/file/${content.filename}`;
       window.open(downloadUrl, '_blank');
     }
   };
@@ -588,7 +588,7 @@ const CoursePage = () => {
                         <Box sx={{ px: 3, pb: 3 }}>
                           <AuthenticatedVideo 
                             filename={resource.filename}
-                            backendUrl={process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001'}
+                            backendUrl={process.env.REACT_APP_BACKEND_URL}
                             isPremium={resource.isPremium}
                             hasSubscription={hasSubscription(resource.unit.year)}
                           />
@@ -675,7 +675,7 @@ const CoursePage = () => {
                               variant="contained"
                               size="small"
                               startIcon={<Assignment />}
-                              href={`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001'}/api/upload/file/${resource.filename}`}
+                              href={`${process.env.REACT_APP_BACKEND_URL}/api/upload/file/${resource.filename}`}
                               target="_blank"
                               sx={{ borderRadius: 2, bgcolor: 'success.main' }}
                             >
@@ -809,7 +809,7 @@ const CoursePage = () => {
               filename={secureContent.filename}
               contentType={secureContent.type === 'cats' || secureContent.type === 'pastExams' ? 'pdf' : 'image'}
               title={secureContent.title}
-              backendUrl={process.env.REACT_APP_BACKEND_URL || 'http://localhost:5001'}
+              backendUrl={process.env.REACT_APP_BACKEND_URL}
               preventScreenshot={true}
               preventRecording={true}
               onClose={() => setSecureViewerOpen(false)}

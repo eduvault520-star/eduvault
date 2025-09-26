@@ -124,7 +124,7 @@ const RealContentApproval = () => {
     const fileUrl = content.content?.filePath || content.content?.url;
     if (fileUrl) {
       // Open file in new tab for viewing
-      window.open(`${process.env.REACT_APP_API_URL || 'http://localhost:5001'}${fileUrl}`, '_blank');
+      window.open(`${process.env.REACT_APP_BACKEND_URL}${fileUrl}`, '_blank');
     } else {
       setSnackbar({
         open: true,
@@ -463,7 +463,7 @@ const RealContentApproval = () => {
                 overflow: 'auto'
               }}>
                 <img 
-                  src={`${process.env.REACT_APP_API_URL || 'http://localhost:5001'}${previewDialog.content.content.filePath}`}
+                  src={`${process.env.REACT_APP_BACKEND_URL}${previewDialog.content.content.filePath}`}
                   alt="Assessment Preview" 
                   style={{ 
                     maxWidth: '100%', 
