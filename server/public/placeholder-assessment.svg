@@ -1,0 +1,72 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#f5f5f5" stroke="#ddd" stroke-width="2"/>
+  
+  <!-- Header -->
+  <rect x="0" y="0" width="800" height="80" fill="#1976d2"/>
+  <text x="400" y="45" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="24" font-weight="bold">
+    EDUVAULT ASSESSMENT
+  </text>
+  
+  <!-- Security Notice -->
+  <rect x="50" y="100" width="700" height="60" fill="#fff3cd" stroke="#ffc107" stroke-width="2"/>
+  <text x="400" y="125" text-anchor="middle" fill="#856404" font-family="Arial, sans-serif" font-size="14" font-weight="bold">
+    🔒 SECURE ASSESSMENT - SCREENSHOTS DISABLED
+  </text>
+  <text x="400" y="145" text-anchor="middle" fill="#856404" font-family="Arial, sans-serif" font-size="12">
+    This is a placeholder image for development. Actual assessments will be loaded securely.
+  </text>
+  
+  <!-- Sample Questions -->
+  <text x="70" y="200" fill="#333" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+    SAMPLE ASSESSMENT QUESTIONS
+  </text>
+  
+  <text x="70" y="230" fill="#333" font-family="Arial, sans-serif" font-size="14">
+    1. What is the primary purpose of data structures in computer science?
+  </text>
+  <text x="90" y="250" fill="#666" font-family="Arial, sans-serif" font-size="12">
+    a) To make programs run faster
+  </text>
+  <text x="90" y="270" fill="#666" font-family="Arial, sans-serif" font-size="12">
+    b) To organize and store data efficiently
+  </text>
+  <text x="90" y="290" fill="#666" font-family="Arial, sans-serif" font-size="12">
+    c) To reduce memory usage
+  </text>
+  <text x="90" y="310" fill="#666" font-family="Arial, sans-serif" font-size="12">
+    d) All of the above
+  </text>
+  
+  <text x="70" y="350" fill="#333" font-family="Arial, sans-serif" font-size="14">
+    2. Which of the following is NOT a linear data structure?
+  </text>
+  <text x="90" y="370" fill="#666" font-family="Arial, sans-serif" font-size="12">
+    a) Array
+  </text>
+  <text x="90" y="390" fill="#666" font-family="Arial, sans-serif" font-size="12">
+    b) Linked List
+  </text>
+  <text x="90" y="410" fill="#666" font-family="Arial, sans-serif" font-size="12">
+    c) Tree
+  </text>
+  <text x="90" y="430" fill="#666" font-family="Arial, sans-serif" font-size="12">
+    d) Stack
+  </text>
+  
+  <!-- Watermark -->
+  <text x="400" y="500" text-anchor="middle" fill="#ddd" font-family="Arial, sans-serif" font-size="48" font-weight="bold" opacity="0.3">
+    EDUVAULT
+  </text>
+  
+  <!-- Footer -->
+  <rect x="0" y="520" width="800" height="80" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1"/>
+  <text x="400" y="545" text-anchor="middle" fill="#6c757d" font-family="Arial, sans-serif" font-size="12">
+    🔒 Secure Assessment Platform - EduVault Kenya
+  </text>
+  <text x="400" y="565" text-anchor="middle" fill="#6c757d" font-family="Arial, sans-serif" font-size="10">
+    Screenshots and screen recording are disabled for security
+  </text>
+  <text x="400" y="580" text-anchor="middle" fill="#6c757d" font-family="Arial, sans-serif" font-size="10">
+    Created by Immanuel K. Ronoh - Egerton University
+  </text>
+</svg>
