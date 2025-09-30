@@ -10,11 +10,51 @@ import {
   CircularProgress,
   TextField,
   Alert,
-  InputAdornment
+  InputAdornment,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel
 } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 import api from '../../utils/api';
 import InstitutionDetailViewMinimal from './InstitutionDetailViewMinimal';
+
+const institutionTypes = [
+  'public_university',
+  'private_university',
+  'medical_college',
+  'polytechnic',
+  'teachers_college',
+  'technical_institute'
+];
+
+const kenyanCounties = [
+  'Nairobi', 'Mombasa', 'Kisumu', 'Nakuru', 'Eldoret', 'Thika', 'Malindi',
+  'Kitale', 'Garissa', 'Kakamega', 'Machakos', 'Meru', 'Nyeri', 'Kericho',
+  'Embu', 'Migori', 'Bungoma', 'Homa Bay', 'Vihiga', 'Bomet'
+];
+
+const createDefaultFormData = () => ({
+  name: '',
+  shortName: '',
+  type: '',
+  location: {
+    town: '',
+    county: '',
+    address: ''
+  },
+  contact: {
+    phone: '',
+    email: '',
+    website: ''
+  },
+  description: ''
+});
 
 const InstitutionManagementTab = ({ userRole }) => {
   const [institutions, setInstitutions] = useState([]);
@@ -26,6 +66,7 @@ const InstitutionManagementTab = ({ userRole }) => {
   const [error, setError] = useState('');
   const [showDetailView, setShowDetailView] = useState(false);
   const [detailInstitution, setDetailInstitution] = useState(null);
+  const [formData, setFormData] = useState(() => createDefaultFormData());
 
   useEffect(() => {
     fetchInstitutions();
@@ -70,12 +111,31 @@ const InstitutionManagementTab = ({ userRole }) => {
 
   const handleAddInstitution = () => {
     setSelectedInstitution(null);
+    setFormData(createDefaultFormData());
     setDialogOpen(true);
+    setError('');
   };
 
   const handleEditInstitution = (institution) => {
     setSelectedInstitution(institution);
+    setFormData({
+      name: institution.name || '',
+      shortName: institution.shortName || '',
+      type: institution.type || '',
+      location: {
+        town: institution.location?.town || '',
+        county: institution.location?.county || '',
+        address: institution.location?.address || ''
+      },
+      contact: {
+        phone: institution.contact?.phone || '',
+        email: institution.contact?.email || '',
+        website: institution.contact?.website || ''
+      },
+      description: institution.description || ''
+    });
     setDialogOpen(true);
+    setError('');
   };
 
   const handleDeleteInstitution = async (institutionId) => {
@@ -95,6 +155,60 @@ const InstitutionManagementTab = ({ userRole }) => {
   const handleViewInstitutionDetails = (institution) => {
     setDetailInstitution(institution);
     setShowDetailView(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setSelectedInstitution(null);
+    setFormData(createDefaultFormData());
+    setError('');
+  };
+
+  const handleInputChange = (field, value, nested = null) => {
+    if (nested) {
+      setFormData(prev => ({
+        ...prev,
+        [nested]: {
+          ...prev[nested],
+          [field]: value
+        }
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    }
+  };
+
+  const handleSubmitInstitution = async () => {
+    try {
+      const payload = {
+        ...formData,
+        location: { ...formData.location },
+        contact: { ...formData.contact }
+      };
+
+      if (selectedInstitution) {
+        await api.put(`/api/institutions/${selectedInstitution._id}`, payload);
+        setSuccess('Institution updated successfully.');
+      } else {
+        await api.post('/api/institutions', payload);
+        setSuccess('Institution created successfully.');
+      }
+
+      setDialogOpen(false);
+      setFormData(createDefaultFormData());
+      setSelectedInstitution(null);
+      setError('');
+      await fetchInstitutions();
+
+      setTimeout(() => setSuccess(''), 4000);
+    } catch (err) {
+      console.error('Error saving institution:', err);
+      setError('Failed to save institution. Please try again.');
+      setTimeout(() => setError(''), 4000);
+    }
   };
 
   const handleBackToInstitutions = () => {
@@ -216,6 +330,121 @@ const InstitutionManagementTab = ({ userRole }) => {
           </Typography>
         </Box>
       )}
+
+      <Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="md" fullWidth>
+        <DialogTitle>{selectedInstitution ? 'Edit Institution' : 'Add Institution'}</DialogTitle>
+        <DialogContent dividers>
+          <Grid container spacing={2} sx={{ mt: 0.5 }}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Institution Name"
+                value={formData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Short Name"
+                value={formData.shortName}
+                onChange={(e) => handleInputChange('shortName', e.target.value)}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth required>
+                <InputLabel>Institution Type</InputLabel>
+                <Select
+                  value={formData.type}
+                  label="Institution Type"
+                  onChange={(e) => handleInputChange('type', e.target.value)}
+                >
+                  {institutionTypes.map((type) => (
+                    <MenuItem key={type} value={type}>
+                      {type.replace('_', ' ').toUpperCase()}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth required>
+                <InputLabel>County</InputLabel>
+                <Select
+                  value={formData.location.county}
+                  label="County"
+                  onChange={(e) => handleInputChange('county', e.target.value, 'location')}
+                >
+                  {kenyanCounties.map((county) => (
+                    <MenuItem key={county} value={county}>
+                      {county}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Town/City"
+                value={formData.location.town}
+                onChange={(e) => handleInputChange('town', e.target.value, 'location')}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Address"
+                value={formData.location.address}
+                onChange={(e) => handleInputChange('address', e.target.value, 'location')}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Phone"
+                value={formData.contact.phone}
+                onChange={(e) => handleInputChange('phone', e.target.value, 'contact')}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Email"
+                type="email"
+                value={formData.contact.email}
+                onChange={(e) => handleInputChange('email', e.target.value, 'contact')}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Website"
+                value={formData.contact.website}
+                onChange={(e) => handleInputChange('website', e.target.value, 'contact')}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Description"
+                multiline
+                rows={3}
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Cancel</Button>
+          <Button variant="contained" onClick={handleSubmitInstitution}>
+            {selectedInstitution ? 'Update' : 'Create'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

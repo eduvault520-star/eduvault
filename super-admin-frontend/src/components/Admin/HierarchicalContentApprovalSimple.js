@@ -192,8 +192,7 @@ const HierarchicalContentApprovalSimple = () => {
       setLoading(false);
     }
   };
-
-  // Helper functions for mock data
+// Helper functions for mock data
   const getMockInstitutions = () => [
     {
       _id: '1',

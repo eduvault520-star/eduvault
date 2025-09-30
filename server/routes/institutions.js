@@ -59,7 +59,14 @@ router.post('/', [
   authorize('super_admin'),
   body('name').trim().isLength({ min: 2 }),
   body('shortName').trim().isLength({ min: 2 }),
-  body('type').isIn(['university', 'technical_college', 'medical_college', 'polytechnic', 'other']),
+  body('type').isIn([
+    'public_university',
+    'private_university',
+    'medical_college',
+    'polytechnic',
+    'teachers_college',
+    'technical_institute'
+  ]),
   body('location.county').trim().isLength({ min: 2 }),
   body('location.town').trim().isLength({ min: 2 })
 ], async (req, res) => {

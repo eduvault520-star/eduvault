@@ -305,8 +305,7 @@ router.delete('/:id/units/:unitId', [
 router.post('/:id/units/:unitId/topics', [
   auth,
   authorize('mini_admin', 'super_admin'),
-  body('title').trim().isLength({ min: 2 }),
-  body('topicNumber').isInt({ min: 1 })
+  body('topicNumber').optional().isInt({ min: 1 })
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -324,18 +323,52 @@ router.post('/:id/units/:unitId/topics', [
       return res.status(404).json({ message: 'Unit not found' });
     }
 
-    // Check if topic number already exists
-    const existingTopic = unit.topics.find(topic => 
-      topic.topicNumber === req.body.topicNumber
-    );
+    const existingNumbers = unit.topics.map(topic => topic.topicNumber);
+    const requestedNumber = Number.isInteger(req.body.topicNumber)
+      ? req.body.topicNumber
+      : parseInt(req.body.topicNumber, 10);
 
-    if (existingTopic) {
-      return res.status(400).json({ 
-        message: 'Topic with this number already exists in the unit' 
-      });
+    let topicNumber;
+    if (Number.isInteger(requestedNumber) && requestedNumber > 0) {
+      topicNumber = requestedNumber;
+    } else if (existingNumbers.length > 0) {
+      topicNumber = Math.max(...existingNumbers) + 1;
+    } else {
+      topicNumber = 1;
     }
 
-    unit.topics.push(req.body);
+    while (existingNumbers.includes(topicNumber)) {
+      topicNumber += 1;
+    }
+
+    const defaultContent = {
+      lectureVideo: {},
+      notes: {},
+      youtubeResources: []
+    };
+
+    const sanitizedTopic = {
+      ...req.body,
+      topicNumber,
+      title: req.body.title && req.body.title.trim() ? req.body.title.trim() : `Topic ${topicNumber}`,
+      description: typeof req.body.description === 'string' ? req.body.description : '',
+      learningOutcomes: Array.isArray(req.body.learningOutcomes) ? req.body.learningOutcomes : [],
+      content: {
+        ...defaultContent,
+        ...(req.body.content || {}),
+        lectureVideo: {
+          ...(req.body.content && req.body.content.lectureVideo ? req.body.content.lectureVideo : {})
+        },
+        notes: {
+          ...(req.body.content && req.body.content.notes ? req.body.content.notes : {})
+        },
+        youtubeResources: Array.isArray(req.body.content && req.body.content.youtubeResources)
+          ? req.body.content.youtubeResources
+          : []
+      }
+    };
+
+    unit.topics.push(sanitizedTopic);
     await course.save();
 
     res.status(201).json({

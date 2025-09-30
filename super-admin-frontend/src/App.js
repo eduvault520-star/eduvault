@@ -13,6 +13,7 @@ import Footer from './components/Layout/Footer';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import ChatbotWidget from './components/Chatbot/ChatbotWidget';
 import { useAuth } from './contexts/AuthContext';
+import ButtonTest from './components/Admin/ButtonTest';
 
 // Lazy loaded pages for better performance (Super Admin-focused)
 import {
@@ -181,6 +182,7 @@ function App() {
                     <Routes>
                       {/* Public Routes */}
                       <Route path="/" element={<Navigate to="/super-admin" replace />} />
+                      <Route path="/button-test" element={<ButtonTest />} />
                       <Route path="/login" element={<LazyLoginPage />} />
                       <Route path="/test-login" element={<TestLoginPage />} />
                       

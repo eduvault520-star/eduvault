@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Typography,
@@ -15,6 +15,7 @@ import {
   TableRow,
   Paper,
   Chip,
+  Alert,
   CircularProgress,
   Dialog,
   DialogTitle,
@@ -25,10 +26,11 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  IconButton,
-  Alert,
   Tabs,
   Tab,
+  IconButton,
+  FormControlLabel,
+  Switch,
   Accordion,
   AccordionSummary,
   AccordionDetails
@@ -41,6 +43,7 @@ import {
   LocationOn,
   ExpandMore,
   Visibility,
+  Close,
   Settings
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
@@ -55,7 +58,8 @@ const InstitutionManagement = ({ userRole = 'super_admin' }) => {
   const [editingInstitution, setEditingInstitution] = useState(null);
   const [selectedInstitution, setSelectedInstitution] = useState(null);
   const [tabValue, setTabValue] = useState(0);
-  const [formData, setFormData] = useState({
+  // Initialize form data with default values
+  const defaultFormData = {
     name: '',
     shortName: '',
     type: '',
@@ -70,7 +74,9 @@ const InstitutionManagement = ({ userRole = 'super_admin' }) => {
       website: ''
     },
     description: ''
-  });
+  };
+
+  const [formData, setFormData] = useState({...defaultFormData});
 
   const institutionTypes = [
     'public_university',
@@ -105,43 +111,36 @@ const InstitutionManagement = ({ userRole = 'super_admin' }) => {
     }
   };
 
-  const handleOpenDialog = (institution = null) => {
-    if (institution) {
-      setEditingInstitution(institution);
-      setFormData({
-        name: institution.name || '',
-        shortName: institution.shortName || '',
-        type: institution.type || '',
-        location: {
-          town: institution.location?.town || '',
-          county: institution.location?.county || '',
-          address: institution.location?.address || ''
-        },
-        contact: {
-          phone: institution.contact?.phone || '',
-          email: institution.contact?.email || '',
-          website: institution.contact?.website || ''
-        },
-        description: institution.description || ''
-      });
-    } else {
-      setEditingInstitution(null);
-      setFormData({
-        name: '',
-        shortName: '',
-        type: '',
-        location: { town: '', county: '', address: '' },
-        contact: { phone: '', email: '', website: '' },
-        description: ''
-      });
+  const handleOpenDialog = useCallback((institution = null) => {
+    console.log('Opening dialog with institution:', institution);
+    try {
+      setOpenDialog(true);
+      if (institution) {
+        setEditingInstitution(institution._id);
+        setFormData({
+          name: institution.name || '',
+          shortName: institution.shortName || '',
+          type: institution.type || '',
+          location: institution.location || { town: '', county: '', address: '' },
+          contact: institution.contact || { phone: '', email: '', website: '' },
+          description: institution.description || ''
+        });
+      } else {
+        setEditingInstitution(null);
+        setFormData({...defaultFormData});
+      }
+    } catch (error) {
+      console.error('Error in handleOpenDialog:', error);
+      setError('Failed to open dialog. Please try again.');
     }
-    setOpenDialog(true);
-  };
+  }, [defaultFormData]);
 
-  const handleCloseDialog = () => {
+  const handleCloseDialog = useCallback(() => {
+    console.log('Closing dialog');
     setOpenDialog(false);
     setEditingInstitution(null);
-  };
+    setFormData({...defaultFormData});
+  }, [defaultFormData]);
 
   const handleInputChange = (field, value, nested = null) => {
     if (nested) {
@@ -163,7 +162,7 @@ const InstitutionManagement = ({ userRole = 'super_admin' }) => {
   const handleSubmit = async () => {
     try {
       if (editingInstitution) {
-        await api.put(`/api/institutions/${editingInstitution._id}`, formData);
+        await api.put(`/api/institutions/${editingInstitution}`, formData);
       } else {
         await api.post('/api/institutions', formData);
       }
@@ -192,6 +191,15 @@ const InstitutionManagement = ({ userRole = 'super_admin' }) => {
     setTabValue(newValue);
   };
 
+  useEffect(() => {
+    console.log('Dialog state:', { openDialog, editingInstitution });
+  }, [openDialog, editingInstitution]);
+
+  const handleAddClick = useCallback(() => {
+    console.log('Add button clicked');
+    handleOpenDialog();
+  }, [handleOpenDialog]);
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
@@ -200,26 +208,56 @@ const InstitutionManagement = ({ userRole = 'super_admin' }) => {
     );
   }
 
+  // Add this style to ensure the button is clickable
+  const buttonStyle = {
+    borderRadius: 2,
+    position: 'relative',
+    zIndex: 1000,
+    '&:hover': {
+      transform: 'translateY(-2px)',
+      boxShadow: 3,
+      backgroundColor: '#1565c0'
+    },
+    transition: 'all 0.3s ease',
+    textTransform: 'none',
+    fontWeight: 500,
+    fontSize: '0.875rem',
+    padding: '8px 16px',
+    minWidth: '150px'
+  };
+
   return (
-    <Container maxWidth="xl" sx={{ py: 3 }}>
+    <Container maxWidth="xl" sx={{ py: 3, position: 'relative' }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         {/* Header */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          mb: 3,
+          position: 'relative',
+          zIndex: 1
+        }}
+          onClick={(e) => e.stopPropagation()}
+        >
           <Typography variant="h4" component="h1" color="primary" sx={{ fontWeight: 600 }}>
             Institution Management
           </Typography>
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={() => handleOpenDialog()}
-            sx={{ borderRadius: 2 }}
-          >
-            Add Institution
-          </Button>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            {/* Add Institution Button */}
+            <Button
+              variant="contained"
+              startIcon={<Add />}
+              onClick={handleAddClick}
+              sx={buttonStyle}
+            >
+              Add Institution
+            </Button>
+          </Box>
         </Box>
 
         {error && (
@@ -322,9 +360,39 @@ const InstitutionManagement = ({ userRole = 'super_admin' }) => {
         )}
 
         {/* Add/Edit Institution Dialog */}
-        <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
-          <DialogTitle>
-            {editingInstitution ? 'Edit Institution' : 'Add New Institution'}
+        <Dialog 
+          open={openDialog} 
+          onClose={handleCloseDialog} 
+          maxWidth="md" 
+          fullWidth
+          disableEnforceFocus
+          disableAutoFocus
+          PaperProps={{
+            style: {
+              zIndex: 1300
+            },
+            onClick: (e) => e.stopPropagation()
+          }}
+          onClick={(e) => e.stopPropagation()}
+          onBackdropClick={handleCloseDialog}
+        >
+          <DialogTitle sx={{ bgcolor: 'primary.main', color: 'white' }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+              <span>{editingInstitution ? 'Edit Institution' : 'Add New Institution'}</span>
+              <IconButton 
+                edge="end" 
+                color="inherit" 
+                onClick={handleCloseDialog}
+                aria-label="close"
+                sx={{
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                  }
+                }}
+              >
+                <Close />
+              </IconButton>
+            </Box>
           </DialogTitle>
           <DialogContent>
             <Grid container spacing={2} sx={{ mt: 1 }}>
